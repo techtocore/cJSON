@@ -1,6 +1,6 @@
 # cJSON
 
-Ultralightweight JSON parser in ANSI C.
+Ultralightweight JSON parser in Checked C.
 
 ## Table of contents
 * [License](#license)
@@ -564,8 +564,9 @@ When cJSON was originally created, it didn't follow the JSON standard and didn't
 
 cJSON supports parsing and printing JSON that contains objects that have multiple members with the same name. `cJSON_GetObjectItemCaseSensitive` however will always only return the first one.
 
-# Enjoy cJSON!
+# Cmd Backup
 
-- Dave Gamble (original author)
-- Max Bruckner and Alan Wang (current maintainer)
-- and the other [cJSON contributors](CONTRIBUTORS.md)
+```
+3c -addcr -alltypes -output-postfix=checked cJSON.c test.c --
+clang -include cJSON.checked.h -c test.checked.c
+```

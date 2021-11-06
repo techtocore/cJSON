@@ -233,7 +233,7 @@ if(ENABLE_CJSON_TEST)
     enable_testing()
 
     set(TEST_CJSON cJSON_test)
-    add_executable("${TEST_CJSON}" test.c)
+    add_executable("${TEST_CJSON}" test.checked.c)
     target_link_libraries("${TEST_CJSON}" "${CJSON_LIB}")
 
     add_test(NAME ${TEST_CJSON} COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${TEST_CJSON}")

@@ -28,29 +28,29 @@
 /* Used by some code below as an example datatype. */
 struct record
 {
-    const char *precision;
+    _Ptr<const char> precision;
     double lat;
     double lon;
-    const char *address;
-    const char *city;
-    const char *state;
-    const char *zip;
-    const char *country;
+    _Ptr<const char> address;
+    _Ptr<const char> city;
+    _Ptr<const char> state;
+    _Ptr<const char> zip;
+    _Ptr<const char> country;
 };
 
 
 /* Create a bunch of objects as demonstration. */
-static int print_preallocated(cJSON *root : itype(_Ptr<cJSON>))
+static int print_preallocated(_Ptr<cJSON> root)
 {
     /* declarations */
-    char *out = NULL;
+    _Nt_array_ptr<char> out = NULL;
     char *buf = NULL;
     char *buf_fail = NULL;
     size_t len = 0;
     size_t len_fail = 0;
 
     /* formatted print */
-    out = cJSON_Print(root);
+    out = ((_Nt_array_ptr<char> )cJSON_Print(root));
 
     /* create buffer to succeed */
     /* the extra 5 bytes are because of inaccuracies when reserving memory */
@@ -109,15 +109,15 @@ static int print_preallocated(cJSON *root : itype(_Ptr<cJSON>))
 static void create_objects(void)
 {
     /* declare a few. */
-    cJSON *root = NULL;
-    cJSON *fmt = NULL;
-    cJSON *img = NULL;
-    cJSON *thm = NULL;
-    cJSON *fld = NULL;
+    _Ptr<cJSON> root = NULL;
+    _Ptr<cJSON> fmt = NULL;
+    _Ptr<cJSON> img = NULL;
+    _Ptr<cJSON> thm = NULL;
+    _Ptr<cJSON> fld = NULL;
     int i = 0;
 
     /* Our "days of the week" array: */
-    const char *strings[7] =
+    _Nt_array_ptr<const char> strings _Checked[7] =
     {
         "Sunday",
         "Monday",
@@ -128,14 +128,14 @@ static void create_objects(void)
         "Saturday"
     };
     /* Our matrix: */
-    int numbers _Checked[3][3] =
+    int numbers _Checked[3] _Checked[3] =
     {
         {0, -1, 0},
         {1, 0, 0},
         {0 ,0, 1}
     };
     /* Our "gallery" item: */
-    int ids[4] = { 116, 943, 234, 38793 };
+    int ids _Checked[4] = { 116, 943, 234, 38793 };
     /* Our array of "records": */
     struct record fields _Checked[2] =
     {
@@ -259,7 +259,7 @@ static void create_objects(void)
 int CJSON_CDECL main(void)
 _Checked {
     /* print the version */
-    _Unchecked { printf("Version: %s\n", cJSON_Version()); };
+    _Unchecked { printf("Version: %s\n", ((_Nt_array_ptr<const char> )cJSON_Version())); };
 
     /* Now some samplecode for building objects concisely: */
     create_objects();

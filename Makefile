@@ -4,7 +4,7 @@ CJSON_LIBNAME = libcjson
 UTILS_LIBNAME = libcjson_utils
 CJSON_TEST = cJSON_test
 
-CJSON_TEST_SRC = cJSON.c test.c
+CJSON_TEST_SRC = cJSON.checked.c test.checked.c
 
 LDLIBS = -lm
 
@@ -105,7 +105,7 @@ $(UTILS_SHARED_VERSION): $(UTILS_OBJ)
 
 #objects
 #cJSON
-$(CJSON_OBJ): cJSON.c cJSON.h
+$(CJSON_OBJ): cJSON.checked.c cJSON.checked.h
 #cJSON_Utils
 $(UTILS_OBJ): cJSON_Utils.c cJSON_Utils.h cJSON.h
 

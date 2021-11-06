@@ -103,23 +103,23 @@ then using the CJSON_API_VISIBILITY flag to "export" the same symbols the way CJ
 typedef struct cJSON
 {
     /* next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem */
-    _Ptr<struct cJSON> next;
-    _Ptr<struct cJSON> prev;
+    struct cJSON *next;
+    struct cJSON *prev;
     /* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
-    _Ptr<struct cJSON> child;
+    struct cJSON *child;
 
     /* The type of the item, as above. */
     int type;
 
     /* The item's string, if type==cJSON_String  and type == cJSON_Raw */
-    _Ptr<char> valuestring;
+    char *valuestring;
     /* writing to valueint is DEPRECATED, use cJSON_SetNumberValue instead */
     int valueint;
     /* The item's number, if type==cJSON_Number */
     double valuedouble;
 
     /* The item's name string, if this item is the child of, or is in the list of subitems of an object. */
-    _Ptr<char> string;
+    char *string;
 } cJSON;
 
 typedef struct cJSON_Hooks
@@ -138,146 +138,146 @@ typedef int cJSON_bool;
 #endif
 
 /* returns the version of cJSON as a string */
-CJSON_PUBLIC(const char*) cJSON_Version(void);
+const char *cJSON_Version(void) : itype(_Nt_array_ptr<const char>);
 
 /* Supply malloc, realloc and free functions to cJSON */
-CJSON_PUBLIC(void) cJSON_InitHooks(cJSON_Hooks* hooks);
+CJSON_PUBLIC(void) cJSON_InitHooks(_Ptr<cJSON_Hooks> hooks);
 
 /* Memory Management: the caller is always responsible to free the results from all variants of cJSON_Parse (with cJSON_Delete) and cJSON_Print (with stdlib free, cJSON_Hooks.free_fn, or cJSON_free as appropriate). The exception is cJSON_PrintPreallocated, where the caller has full responsibility of the buffer. */
 /* Supply a block of JSON, and this returns a cJSON object you can interrogate. */
-CJSON_PUBLIC(cJSON *) cJSON_Parse(const char *value);
-CJSON_PUBLIC(cJSON *) cJSON_ParseWithLength(const char *value, size_t buffer_length);
+_Ptr<cJSON> cJSON_Parse(_Nt_array_ptr<const char> value);
+_Ptr<cJSON> cJSON_ParseWithLength(_Ptr<const char> value, size_t buffer_length);
 /* ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed. */
 /* If you supply a ptr in return_parse_end and parsing fails, then return_parse_end will contain a pointer to the error so will match cJSON_GetErrorPtr(). */
-CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cJSON_bool require_null_terminated);
-CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer_length, const char **return_parse_end, cJSON_bool require_null_terminated);
+_Ptr<cJSON> cJSON_ParseWithOpts(_Nt_array_ptr<const char> value, _Ptr<_Ptr<const char>> return_parse_end, cJSON_bool require_null_terminated);
+_Ptr<cJSON> cJSON_ParseWithLengthOpts(const char *value : itype(_Ptr<const char>), size_t buffer_length, const char **return_parse_end : itype(_Ptr<_Ptr<const char>>), cJSON_bool require_null_terminated);
 
 /* Render a cJSON entity to text for transfer/storage. */
-CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item);
+char *cJSON_Print(_Ptr<const cJSON> item) : itype(_Nt_array_ptr<char>);
 /* Render a cJSON entity to text for transfer/storage without any formatting. */
-CJSON_PUBLIC(char *) cJSON_PrintUnformatted(const cJSON *item);
+char *cJSON_PrintUnformatted(_Ptr<const cJSON> item) : itype(_Ptr<char>);
 /* Render a cJSON entity to text using a buffered strategy. prebuffer is a guess at the final size. guessing well reduces reallocation. fmt=0 gives unformatted, =1 gives formatted */
-CJSON_PUBLIC(char *) cJSON_PrintBuffered(const cJSON *item, int prebuffer, cJSON_bool fmt);
+char *cJSON_PrintBuffered(_Ptr<const cJSON> item, int prebuffer, cJSON_bool fmt) : itype(_Ptr<char>);
 /* Render a cJSON entity to text using a buffer already allocated in memory with given length. Returns 1 on success and 0 on failure. */
 /* NOTE: cJSON is not always 100% accurate in estimating how much memory it will use, so to be safe allocate 5 bytes more than you actually need */
-CJSON_PUBLIC(cJSON_bool) cJSON_PrintPreallocated(cJSON *item, char *buffer, const int length, const cJSON_bool format);
+CJSON_PUBLIC(cJSON_bool) cJSON_PrintPreallocated(_Ptr<cJSON> item, char *buffer : itype(_Ptr<char>), const int length, const cJSON_bool format);
 /* Delete a cJSON entity and all subentities. */
-CJSON_PUBLIC(void) cJSON_Delete(cJSON *item);
+CJSON_PUBLIC(void) cJSON_Delete(cJSON *item : itype(_Ptr<cJSON>));
 
 /* Returns the number of items in an array (or object). */
-CJSON_PUBLIC(int) cJSON_GetArraySize(const cJSON *array);
+CJSON_PUBLIC(int) cJSON_GetArraySize(_Ptr<const cJSON> array);
 /* Retrieve item number "index" from array "array". Returns NULL if unsuccessful. */
-CJSON_PUBLIC(cJSON *) cJSON_GetArrayItem(const cJSON *array, int index);
+_Ptr<cJSON> cJSON_GetArrayItem(_Ptr<const cJSON> array, int index);
 /* Get item "string" from object. Case insensitive. */
-CJSON_PUBLIC(cJSON *) cJSON_GetObjectItem(const cJSON * const object, const char * const string);
-CJSON_PUBLIC(cJSON *) cJSON_GetObjectItemCaseSensitive(const cJSON * const object, const char * const string);
-CJSON_PUBLIC(cJSON_bool) cJSON_HasObjectItem(const cJSON *object, const char *string);
+_Ptr<cJSON> cJSON_GetObjectItem(const _Ptr<const cJSON> object, const _Nt_array_ptr<const char> string);
+_Ptr<cJSON> cJSON_GetObjectItemCaseSensitive(const _Ptr<const cJSON> object, const _Nt_array_ptr<const char> string);
+CJSON_PUBLIC(cJSON_bool) cJSON_HasObjectItem(_Ptr<const cJSON> object, _Nt_array_ptr<const char> string);
 /* For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make sense of it. Defined when cJSON_Parse() returns 0. 0 when cJSON_Parse() succeeds. */
-CJSON_PUBLIC(const char *) cJSON_GetErrorPtr(void);
+const char *cJSON_GetErrorPtr(void) : itype(_Ptr<const char>);
 
 /* Check item type and return its value */
-CJSON_PUBLIC(char *) cJSON_GetStringValue(const cJSON * const item);
-CJSON_PUBLIC(double) cJSON_GetNumberValue(const cJSON * const item);
+char *cJSON_GetStringValue(const _Ptr<const cJSON> item) : itype(_Ptr<char>);
+CJSON_PUBLIC(double) cJSON_GetNumberValue(const _Ptr<const cJSON> item);
 
 /* These functions check the type of an item */
-CJSON_PUBLIC(cJSON_bool) cJSON_IsInvalid(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsFalse(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsTrue(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsBool(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsNull(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsNumber(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsString(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsArray(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsObject(const cJSON * const item);
-CJSON_PUBLIC(cJSON_bool) cJSON_IsRaw(const cJSON * const item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsInvalid(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsFalse(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsTrue(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsBool(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsNull(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsNumber(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsString(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsArray(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsObject(const _Ptr<const cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_IsRaw(const _Ptr<const cJSON> item);
 
 /* These calls create a cJSON item of the appropriate type. */
-CJSON_PUBLIC(cJSON *) cJSON_CreateNull(void);
-CJSON_PUBLIC(cJSON *) cJSON_CreateTrue(void);
-CJSON_PUBLIC(cJSON *) cJSON_CreateFalse(void);
-CJSON_PUBLIC(cJSON *) cJSON_CreateBool(cJSON_bool boolean);
-CJSON_PUBLIC(cJSON *) cJSON_CreateNumber(double num);
-CJSON_PUBLIC(cJSON *) cJSON_CreateString(const char *string);
+_Ptr<cJSON>  cJSON_CreateNull(void);
+_Ptr<cJSON>  cJSON_CreateTrue(void);
+_Ptr<cJSON>  cJSON_CreateFalse(void);
+_Ptr<cJSON>  cJSON_CreateBool(cJSON_bool boolean);
+_Ptr<cJSON>  cJSON_CreateNumber(double num);
+_Ptr<cJSON> cJSON_CreateString(const char *string : itype(_Ptr<const char>));
 /* raw json */
-CJSON_PUBLIC(cJSON *) cJSON_CreateRaw(const char *raw);
-CJSON_PUBLIC(cJSON *) cJSON_CreateArray(void);
-CJSON_PUBLIC(cJSON *) cJSON_CreateObject(void);
+_Ptr<cJSON> cJSON_CreateRaw(const char *raw : itype(_Ptr<const char>));
+_Ptr<cJSON>  cJSON_CreateArray(void);
+_Ptr<cJSON>  cJSON_CreateObject(void);
 
 /* Create a string where valuestring references a string so
  * it will not be freed by cJSON_Delete */
-CJSON_PUBLIC(cJSON *) cJSON_CreateStringReference(const char *string);
+_Ptr<cJSON> cJSON_CreateStringReference(const char *string : itype(_Ptr<const char>));
 /* Create an object/array that only references it's elements so
  * they will not be freed by cJSON_Delete */
-CJSON_PUBLIC(cJSON *) cJSON_CreateObjectReference(const cJSON *child);
-CJSON_PUBLIC(cJSON *) cJSON_CreateArrayReference(const cJSON *child);
+_Ptr<cJSON> cJSON_CreateObjectReference(const cJSON *child : itype(_Ptr<const cJSON>));
+_Ptr<cJSON> cJSON_CreateArrayReference(const cJSON *child : itype(_Ptr<const cJSON>));
 
 /* These utilities create an Array of count items.
  * The parameter count cannot be greater than the number of elements in the number array, otherwise array access will be out of bounds.*/
-CJSON_PUBLIC(cJSON *) cJSON_CreateIntArray(int numbers _Checked[], int count);
-CJSON_PUBLIC(cJSON *) cJSON_CreateFloatArray(const float *numbers, int count);
-CJSON_PUBLIC(cJSON *) cJSON_CreateDoubleArray(const double *numbers, int count);
-CJSON_PUBLIC(cJSON *) cJSON_CreateStringArray(const char *const *strings, int count);
+_Ptr<cJSON> cJSON_CreateIntArray(_Array_ptr<const int> numbers : count(count), int count);
+_Ptr<cJSON> cJSON_CreateFloatArray(_Array_ptr<const float> numbers : count(count), int count);
+_Ptr<cJSON> cJSON_CreateDoubleArray(_Array_ptr<const double> numbers : count(count), int count);
+_Ptr<cJSON> cJSON_CreateStringArray(_Array_ptr<const _Nt_array_ptr<const char>> strings : count(count), int count);
 
 /* Append item to the specified array/object. */
-CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToArray(cJSON *array, cJSON *item);
-CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item);
+CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToArray(_Ptr<cJSON> array, _Ptr<cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObject(_Ptr<cJSON> object, _Ptr<const char> string, _Ptr<cJSON> item);
 /* Use this when string is definitely const (i.e. a literal, or as good as), and will definitely survive the cJSON object.
  * WARNING: When this function was used, make sure to always check that (item->type & cJSON_StringIsConst) is zero before
  * writing to `item->string` */
-CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObjectCS(cJSON *object, const char *string, cJSON *item);
+CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObjectCS(_Ptr<cJSON> object, _Ptr<const char> string, _Ptr<cJSON> item);
 /* Append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON. */
-CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item);
-CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToObject(cJSON *object, const char *string, cJSON *item);
+CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToArray(_Ptr<cJSON> array, _Array_ptr<cJSON> item);
+CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToObject(_Ptr<cJSON> object, _Ptr<const char> string, _Array_ptr<cJSON> item);
 
 /* Remove/Detach items from Arrays/Objects. */
-CJSON_PUBLIC(cJSON *) cJSON_DetachItemViaPointer(cJSON *parent, cJSON * const item);
-CJSON_PUBLIC(cJSON *) cJSON_DetachItemFromArray(cJSON *array, int which);
-CJSON_PUBLIC(void) cJSON_DeleteItemFromArray(cJSON *array, int which);
-CJSON_PUBLIC(cJSON *) cJSON_DetachItemFromObject(cJSON *object, const char *string);
-CJSON_PUBLIC(cJSON *) cJSON_DetachItemFromObjectCaseSensitive(cJSON *object, const char *string);
-CJSON_PUBLIC(void) cJSON_DeleteItemFromObject(cJSON *object, const char *string);
-CJSON_PUBLIC(void) cJSON_DeleteItemFromObjectCaseSensitive(cJSON *object, const char *string);
+_Ptr<cJSON> cJSON_DetachItemViaPointer(_Ptr<cJSON> parent, const _Ptr<cJSON> item);
+_Ptr<cJSON> cJSON_DetachItemFromArray(_Ptr<cJSON> array, int which);
+CJSON_PUBLIC(void) cJSON_DeleteItemFromArray(_Ptr<cJSON> array, int which);
+_Ptr<cJSON> cJSON_DetachItemFromObject(_Ptr<cJSON> object, _Nt_array_ptr<const char> string);
+_Ptr<cJSON> cJSON_DetachItemFromObjectCaseSensitive(_Ptr<cJSON> object, _Nt_array_ptr<const char> string);
+CJSON_PUBLIC(void) cJSON_DeleteItemFromObject(_Ptr<cJSON> object, _Nt_array_ptr<const char> string);
+CJSON_PUBLIC(void) cJSON_DeleteItemFromObjectCaseSensitive(_Ptr<cJSON> object, _Nt_array_ptr<const char> string);
 
 /* Update array items. */
-CJSON_PUBLIC(cJSON_bool) cJSON_InsertItemInArray(cJSON *array, int which, cJSON *newitem); /* Shifts pre-existing items to the right. */
-CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemViaPointer(cJSON * const parent, cJSON * const item, cJSON * replacement);
-CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem);
-CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInObject(cJSON *object,const char *string,cJSON *newitem);
-CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInObjectCaseSensitive(cJSON *object,const char *string,cJSON *newitem);
+CJSON_PUBLIC(cJSON_bool) cJSON_InsertItemInArray(_Ptr<cJSON> array, int which, cJSON *newitem : itype(_Ptr<cJSON>)); /* Shifts pre-existing items to the right. */
+CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemViaPointer(const _Ptr<cJSON> parent, const _Ptr<cJSON> item, cJSON *replacement : itype(_Ptr<cJSON>));
+CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInArray(_Ptr<cJSON> array, int which, _Ptr<cJSON> newitem);
+CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInObject(_Ptr<cJSON> object, _Nt_array_ptr<const char> string, _Ptr<cJSON> newitem);
+CJSON_PUBLIC(cJSON_bool) cJSON_ReplaceItemInObjectCaseSensitive(_Ptr<cJSON> object, _Nt_array_ptr<const char> string, _Ptr<cJSON> newitem);
 
 /* Duplicate a cJSON item */
-CJSON_PUBLIC(cJSON *) cJSON_Duplicate(const cJSON *item, cJSON_bool recurse);
+_Ptr<cJSON> cJSON_Duplicate(_Ptr<const cJSON> item, cJSON_bool recurse);
 /* Duplicate will create a new, identical cJSON item to the one you pass, in new memory that will
  * need to be released. With recurse!=0, it will duplicate any children connected to the item.
  * The item->next and ->prev pointers are always zero on return from Duplicate. */
 /* Recursively compare two cJSON items for equality. If either a or b is NULL or invalid, they will be considered unequal.
  * case_sensitive determines if object keys are treated case sensitive (1) or case insensitive (0) */
-CJSON_PUBLIC(cJSON_bool) cJSON_Compare(const cJSON * const a, const cJSON * const b, const cJSON_bool case_sensitive);
+CJSON_PUBLIC(cJSON_bool) cJSON_Compare(const _Ptr<const cJSON> a, const _Ptr<const cJSON> b, const cJSON_bool case_sensitive);
 
 /* Minify a strings, remove blank characters(such as ' ', '\t', '\r', '\n') from strings.
  * The input pointer json cannot point to a read-only address area, such as a string constant, 
  * but should point to a readable and writable address area. */
-CJSON_PUBLIC(void) cJSON_Minify(char *json);
+CJSON_PUBLIC(void) cJSON_Minify(char *json : itype(_Array_ptr<char>));
 
 /* Helper functions for creating and adding items to an object at the same time.
  * They return the added item or NULL on failure. */
-CJSON_PUBLIC(cJSON*) cJSON_AddNullToObject(cJSON * const object, const char * const name);
-CJSON_PUBLIC(cJSON*) cJSON_AddTrueToObject(cJSON * const object, const char * const name);
-CJSON_PUBLIC(cJSON*) cJSON_AddFalseToObject(cJSON * const object, const char * const name);
-CJSON_PUBLIC(cJSON*) cJSON_AddBoolToObject(cJSON * const object, const char * const name, const cJSON_bool boolean);
-CJSON_PUBLIC(cJSON*) cJSON_AddNumberToObject(cJSON * const object, const char * const name, const double number);
-CJSON_PUBLIC(cJSON*) cJSON_AddStringToObject(cJSON * const object, const char * const name, const char * const string);
-CJSON_PUBLIC(cJSON*) cJSON_AddRawToObject(cJSON * const object, const char * const name, const char * const raw);
-CJSON_PUBLIC(cJSON*) cJSON_AddObjectToObject(cJSON * const object, const char * const name);
-CJSON_PUBLIC(cJSON*) cJSON_AddArrayToObject(cJSON * const object, const char * const name);
+_Ptr<cJSON> cJSON_AddNullToObject(const _Ptr<cJSON> object, const _Ptr<const char> name);
+_Ptr<cJSON> cJSON_AddTrueToObject(const _Ptr<cJSON> object, const _Ptr<const char> name);
+_Ptr<cJSON> cJSON_AddFalseToObject(const _Ptr<cJSON> object, const _Ptr<const char> name);
+_Ptr<cJSON> cJSON_AddBoolToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const cJSON_bool boolean);
+_Ptr<cJSON> cJSON_AddNumberToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const double number);
+_Ptr<cJSON> cJSON_AddStringToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const _Ptr<const char> string);
+_Ptr<cJSON> cJSON_AddRawToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const _Ptr<const char> raw);
+_Ptr<cJSON> cJSON_AddObjectToObject(const _Ptr<cJSON> object, const _Ptr<const char> name);
+_Ptr<cJSON> cJSON_AddArrayToObject(const _Ptr<cJSON> object, const _Ptr<const char> name);
 
 /* When assigning an integer value, it needs to be propagated to valuedouble too. */
 #define cJSON_SetIntValue(object, number) ((object) ? (object)->valueint = (object)->valuedouble = (number) : (number))
 /* helper for the cJSON_SetNumberValue macro */
-CJSON_PUBLIC(double) cJSON_SetNumberHelper(cJSON *object, double number);
+CJSON_PUBLIC(double) cJSON_SetNumberHelper(_Ptr<cJSON> object, double number);
 #define cJSON_SetNumberValue(object, number) ((object != NULL) ? cJSON_SetNumberHelper(object, (double)number) : (number))
 /* Change the valuestring of a cJSON_String object, only takes effect when type of object is cJSON_String */
-CJSON_PUBLIC(char*) cJSON_SetValuestring(cJSON *object, const char *valuestring);
+char *cJSON_SetValuestring(_Ptr<cJSON> object, const char *valuestring : itype(_Nt_array_ptr<const char>)) : itype(_Ptr<char>);
 
 /* Macro for iterating over an array or object */
 #define cJSON_ArrayForEach(element, array) for(element = (array != NULL) ? (array)->child : NULL; element != NULL; element = element->next)
