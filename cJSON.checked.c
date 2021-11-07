@@ -130,20 +130,20 @@ const char *cJSON_Version(void) : itype(_Nt_array_ptr<const char>)
 }
 
 /* Case insensitive string comparison, doesn't consider two NULL pointers equal though */
-static int case_insensitive_strcmp(_Array_ptr<const unsigned char> string1, _Array_ptr<const unsigned char> string2)
+static int case_insensitive_strcmp(const unsigned char *string1, const unsigned char *string2)
 {
     if ((string1 == NULL) || (string2 == NULL))
-    _Checked {
+    _Unchecked {
         return 1;
     }
 
     if (string1 == string2)
-    _Checked {
+    _Unchecked {
         return 0;
     }
 
     for(; tolower(*string1) == tolower(*string2); (void)string1++, string2++)
-    _Checked {
+    _Unchecked {
         if (*string1 == '\0')
         {
             return 0;
@@ -544,7 +544,7 @@ _Checked {
 /* Render the number nicely from the given item into a string. */
 static cJSON_bool print_number(const _Ptr<const cJSON> item, const _Ptr<printbuffer> output_buffer)
 {
-    _Array_ptr<unsigned char> output_pointer : count(length) = NULL;
+    unsigned char *output_pointer = NULL;
     double d = item->valuedouble;
     int length = 0;
     size_t i = 0;
@@ -593,7 +593,7 @@ static cJSON_bool print_number(const _Ptr<const cJSON> item, const _Ptr<printbuf
     for (i = 0; i < ((size_t)length); i++)
     {
         if (number_buffer[i] == decimal_point)
-        _Checked {
+        _Unchecked {
             output_pointer[i] = '.';
             continue;
         }
