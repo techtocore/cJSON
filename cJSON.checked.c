@@ -608,8 +608,8 @@ static cJSON_bool print_number(const _Ptr<const cJSON> item, const _Ptr<printbuf
 }
 
 /* parse 4 digit hexadecimal number */
-static unsigned parse_hex4(const _Array_ptr<const unsigned char> input : count(3))
-_Checked {
+static unsigned parse_hex4(const unsigned char * const input)
+_Unchecked {
     unsigned int h = 0;
     size_t i = 0;
 
@@ -645,11 +645,11 @@ _Checked {
 
 /* converts a UTF-16 literal to UTF-8
  * A literal can be one or two sequences of the form \uXXXX */
-static unsigned char utf16_literal_to_utf8(const _Array_ptr<const unsigned char> input_pointer : count(0), const _Array_ptr<const unsigned char> input_end, _Ptr<unsigned char *> output_pointer)
+static unsigned char utf16_literal_to_utf8(const unsigned char * const input_pointer, const _Array_ptr<const unsigned char> input_end, _Ptr<unsigned char *> output_pointer)
 {
     long unsigned int codepoint = 0;
     unsigned int first_code = 0;
-    _Array_ptr<const unsigned char> first_sequence : count(utf8_length) = input_pointer;
+    const unsigned char *first_sequence = input_pointer;
     unsigned char utf8_length = 0;
     unsigned char utf8_position = 0;
     unsigned char sequence_length = 0;
@@ -672,8 +672,8 @@ static unsigned char utf16_literal_to_utf8(const _Array_ptr<const unsigned char>
 
     /* UTF16 surrogate pair */
     if ((first_code >= 0xD800) && (first_code <= 0xDBFF))
-    _Checked {
-        _Array_ptr<const unsigned char> second_sequence : count(utf8_length) = first_sequence + 6;
+    _Unchecked {
+        const unsigned char *second_sequence = first_sequence + 6;
         unsigned int second_code = 0;
         sequence_length = 12; /* \uXXXX\uXXXX */
 
@@ -854,7 +854,7 @@ static cJSON_bool parse_string(const _Ptr<cJSON> item, const _Ptr<parse_buffer> 
 
                 /* UTF-16 literal */
                 case 'u':
-                    sequence_length = utf16_literal_to_utf8(_Assume_bounds_cast<const _Array_ptr<const unsigned char>>(input_pointer,  count(0)), _Assume_bounds_cast<const _Array_ptr<const unsigned char>>(input_end, byte_count(0)), &output_pointer);
+                    sequence_length = utf16_literal_to_utf8(input_pointer, input_end, &output_pointer);
                     if (sequence_length == 0)
                     _Checked {
                         /* failed to convert UTF16-literal to UTF-8 */
@@ -895,9 +895,9 @@ fail:
 }
 
 /* Render the cstring provided to an escaped version that can be printed. */
-static cJSON_bool print_string_ptr(const _Array_ptr<const unsigned char> input, const _Ptr<printbuffer> output_buffer)
+static cJSON_bool print_string_ptr(const unsigned char * const input, const _Ptr<printbuffer> output_buffer)
 {
-    _Array_ptr<const unsigned char> input_pointer = NULL;
+    const unsigned char *input_pointer = NULL;
     unsigned char *output = NULL;
     unsigned char *output_pointer = NULL;
     size_t output_length = 0;
@@ -924,7 +924,7 @@ static cJSON_bool print_string_ptr(const _Array_ptr<const unsigned char> input, 
 
     /* set "flag" to 1 if something needs to be escaped */
     for (input_pointer = input; *input_pointer; input_pointer++)
-    _Checked {
+    _Unchecked {
         switch (*input_pointer)
         {
             case '\"':
@@ -969,7 +969,7 @@ static cJSON_bool print_string_ptr(const _Array_ptr<const unsigned char> input, 
     output_pointer = output + 1;
     /* copy the string */
     for (input_pointer = input; *input_pointer != '\0'; (void)input_pointer++, output_pointer++)
-    _Checked {
+    _Unchecked {
         if ((*input_pointer > 31) && (*input_pointer != '\"') && (*input_pointer != '\\'))
         _Unchecked {
             /* normal character, copy */
