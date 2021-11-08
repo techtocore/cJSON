@@ -1019,7 +1019,7 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, const _Ptr
 /* Invoke print_string_ptr (which is useful) on an item. */
 static cJSON_bool print_string(const _Ptr<const cJSON> item, const _Ptr<printbuffer> p)
 {
-    return print_string_ptr(_Assume_bounds_cast<const _Array_ptr<const unsigned char>>((unsigned char*)item->valuestring, byte_count(0)), p);
+    return print_string_ptr((unsigned char*)item->valuestring, p);
 }
 
 /* Predeclare these prototypes. */
@@ -1088,7 +1088,7 @@ _Ptr<cJSON> cJSON_ParseWithOpts(_Nt_array_ptr<const char> value, _Ptr<_Ptr<const
 }
 
 /* Parse an object - create a new root, and populate. */
-_Ptr<cJSON> cJSON_ParseWithLengthOpts(const char *value : itype(_Ptr<const char>), size_t buffer_length, const char **return_parse_end : itype(_Ptr<_Ptr<const char>>), cJSON_bool require_null_terminated)
+_Ptr<cJSON> cJSON_ParseWithLengthOpts(_Nt_array_ptr<const char> value, size_t buffer_length, const char **return_parse_end : itype(_Ptr<_Ptr<const char>>), cJSON_bool require_null_terminated)
 {
     parse_buffer buffer = { 0, 0, 0, 0, { 0, 0, 0 } };
     _Ptr<cJSON> item = NULL;
@@ -1173,7 +1173,7 @@ _Ptr<cJSON> cJSON_Parse(_Nt_array_ptr<const char> value)
     return cJSON_ParseWithOpts(value, 0, 0);
 }
 
-_Ptr<cJSON> cJSON_ParseWithLength(_Ptr<const char> value, size_t buffer_length)
+_Ptr<cJSON> cJSON_ParseWithLength(_Nt_array_ptr<const char> value, size_t buffer_length)
 {
     return cJSON_ParseWithLengthOpts(value, buffer_length, 0, 0);
 }

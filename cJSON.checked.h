@@ -146,11 +146,11 @@ CJSON_PUBLIC(void) cJSON_InitHooks(_Ptr<cJSON_Hooks> hooks);
 /* Memory Management: the caller is always responsible to free the results from all variants of cJSON_Parse (with cJSON_Delete) and cJSON_Print (with stdlib free, cJSON_Hooks.free_fn, or cJSON_free as appropriate). The exception is cJSON_PrintPreallocated, where the caller has full responsibility of the buffer. */
 /* Supply a block of JSON, and this returns a cJSON object you can interrogate. */
 _Ptr<cJSON> cJSON_Parse(_Nt_array_ptr<const char> value);
-_Ptr<cJSON> cJSON_ParseWithLength(_Ptr<const char> value, size_t buffer_length);
+_Ptr<cJSON> cJSON_ParseWithLength(_Nt_array_ptr<const char> value, size_t buffer_length);
 /* ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed. */
 /* If you supply a ptr in return_parse_end and parsing fails, then return_parse_end will contain a pointer to the error so will match cJSON_GetErrorPtr(). */
 _Ptr<cJSON> cJSON_ParseWithOpts(_Nt_array_ptr<const char> value, _Ptr<_Ptr<const char>> return_parse_end, cJSON_bool require_null_terminated);
-_Ptr<cJSON> cJSON_ParseWithLengthOpts(const char *value : itype(_Ptr<const char>), size_t buffer_length, const char **return_parse_end : itype(_Ptr<_Ptr<const char>>), cJSON_bool require_null_terminated);
+_Ptr<cJSON> cJSON_ParseWithLengthOpts(_Nt_array_ptr<const char> value, size_t buffer_length, const char **return_parse_end : itype(_Ptr<_Ptr<const char>>), cJSON_bool require_null_terminated);
 
 /* Render a cJSON entity to text for transfer/storage. */
 char *cJSON_Print(_Ptr<const cJSON> item) : itype(_Nt_array_ptr<char>);
