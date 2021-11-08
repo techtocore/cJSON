@@ -238,7 +238,7 @@ CJSON_PUBLIC(void) cJSON_InitHooks(_Ptr<cJSON_Hooks> hooks)
 }
 
 /* Internal constructor. */
-static cJSON *cJSON_New_Item(const _Ptr<const internal_hooks> hooks) : itype(_Array_ptr<cJSON>)
+static cJSON *cJSON_New_Item(const _Ptr<const internal_hooks> hooks) : itype(_Ptr<cJSON>)
 {
     cJSON* node = (cJSON*)hooks->allocate(sizeof(cJSON));
     if (node)
@@ -1183,7 +1183,7 @@ _Ptr<cJSON> cJSON_ParseWithLength(_Nt_array_ptr<const char> value, size_t buffer
 static unsigned char *print(const _Ptr<const cJSON> item, cJSON_bool format, const _Ptr<const internal_hooks> hooks) : itype(_Ptr<unsigned char>)
 {
     static const size_t default_buffer_size = 256;
-    printbuffer buffer[1];
+    printbuffer buffer[1] = {};
     unsigned char *printed = NULL;
 
     memset(buffer, 0, sizeof(buffer));
