@@ -1927,9 +1927,9 @@ static void suffix_object(cJSON *prev : itype(_Ptr<cJSON>), cJSON *item : itype(
 }
 
 /* Utility for handling references. */
-static cJSON *create_reference(_Array_ptr<const cJSON> item, const _Ptr<const internal_hooks> hooks)
+static _Ptr<cJSON> create_reference(_Array_ptr<const cJSON> item, const _Ptr<const internal_hooks> hooks)
 {
-    cJSON *reference = NULL;
+    _Ptr<cJSON> reference = NULL;
     if (item == NULL)
     {
         return NULL;
@@ -2003,7 +2003,7 @@ static void* cast_away_const(const void* string)
 #endif
 
 
-static cJSON_bool add_item_to_object(const _Ptr<cJSON> object, const char *string : itype(const _Ptr<const char>), const _Ptr<cJSON> item, const _Ptr<const internal_hooks> hooks, const cJSON_bool constant_key)
+static cJSON_bool add_item_to_object(const _Ptr<cJSON> object, const char *string, const _Ptr<cJSON> item, const _Ptr<const internal_hooks> hooks, const cJSON_bool constant_key)
 {
     char *new_key = NULL;
     int new_type = cJSON_Invalid;
@@ -2042,13 +2042,13 @@ static cJSON_bool add_item_to_object(const _Ptr<cJSON> object, const char *strin
 
 CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObject(_Ptr<cJSON> object, _Ptr<const char> string, _Ptr<cJSON> item)
 {
-    return add_item_to_object(object, string, item, &global_hooks, false);
+    return add_item_to_object(object, (const char *) string, item, &global_hooks, false);
 }
 
 /* Add an item to an object with constant string as key */
 CJSON_PUBLIC(cJSON_bool) cJSON_AddItemToObjectCS(_Ptr<cJSON> object, _Ptr<const char> string, _Ptr<cJSON> item)
 {
-    return add_item_to_object(object, string, item, &global_hooks, true);
+    return add_item_to_object(object, (const char *) string, item, &global_hooks, true);
 }
 
 CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToArray(_Ptr<cJSON> array, _Array_ptr<cJSON> item)
@@ -2068,13 +2068,13 @@ CJSON_PUBLIC(cJSON_bool) cJSON_AddItemReferenceToObject(_Ptr<cJSON> object, _Ptr
         return false;
     }
 
-    return add_item_to_object(object, string, create_reference(item, &global_hooks), &global_hooks, false);
+    return add_item_to_object(object, (const char *) string, create_reference(item, &global_hooks), &global_hooks, false);
 }
 
 _Ptr<cJSON> cJSON_AddNullToObject(const _Ptr<cJSON> object, const _Ptr<const char> name)
 {
     _Ptr<cJSON> null = cJSON_CreateNull();
-    if (add_item_to_object(object, name, null, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, null, &global_hooks, false))
     {
         return null;
     }
@@ -2086,7 +2086,7 @@ _Ptr<cJSON> cJSON_AddNullToObject(const _Ptr<cJSON> object, const _Ptr<const cha
 _Ptr<cJSON> cJSON_AddTrueToObject(const _Ptr<cJSON> object, const _Ptr<const char> name)
 {
     _Ptr<cJSON> true_item = cJSON_CreateTrue();
-    if (add_item_to_object(object, name, true_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, true_item, &global_hooks, false))
     {
         return true_item;
     }
@@ -2098,7 +2098,7 @@ _Ptr<cJSON> cJSON_AddTrueToObject(const _Ptr<cJSON> object, const _Ptr<const cha
 _Ptr<cJSON> cJSON_AddFalseToObject(const _Ptr<cJSON> object, const _Ptr<const char> name)
 {
     _Ptr<cJSON> false_item = cJSON_CreateFalse();
-    if (add_item_to_object(object, name, false_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, false_item, &global_hooks, false))
     {
         return false_item;
     }
@@ -2110,7 +2110,7 @@ _Ptr<cJSON> cJSON_AddFalseToObject(const _Ptr<cJSON> object, const _Ptr<const ch
 _Ptr<cJSON> cJSON_AddBoolToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const cJSON_bool boolean)
 {
     _Ptr<cJSON> bool_item = cJSON_CreateBool(boolean);
-    if (add_item_to_object(object, name, bool_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, bool_item, &global_hooks, false))
     {
         return bool_item;
     }
@@ -2122,7 +2122,7 @@ _Ptr<cJSON> cJSON_AddBoolToObject(const _Ptr<cJSON> object, const _Ptr<const cha
 _Ptr<cJSON> cJSON_AddNumberToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const double number)
 {
     _Ptr<cJSON> number_item = cJSON_CreateNumber(number);
-    if (add_item_to_object(object, name, number_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, number_item, &global_hooks, false))
     {
         return number_item;
     }
@@ -2134,7 +2134,7 @@ _Ptr<cJSON> cJSON_AddNumberToObject(const _Ptr<cJSON> object, const _Ptr<const c
 _Ptr<cJSON> cJSON_AddStringToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const _Ptr<const char> string)
 {
     _Ptr<cJSON> string_item = cJSON_CreateString(string);
-    if (add_item_to_object(object, name, string_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, string_item, &global_hooks, false))
     {
         return string_item;
     }
@@ -2146,7 +2146,7 @@ _Ptr<cJSON> cJSON_AddStringToObject(const _Ptr<cJSON> object, const _Ptr<const c
 _Ptr<cJSON> cJSON_AddRawToObject(const _Ptr<cJSON> object, const _Ptr<const char> name, const _Ptr<const char> raw)
 {
     _Ptr<cJSON> raw_item = cJSON_CreateRaw(raw);
-    if (add_item_to_object(object, name, raw_item, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, raw_item, &global_hooks, false))
     {
         return raw_item;
     }
@@ -2158,7 +2158,7 @@ _Ptr<cJSON> cJSON_AddRawToObject(const _Ptr<cJSON> object, const _Ptr<const char
 _Ptr<cJSON> cJSON_AddObjectToObject(const _Ptr<cJSON> object, const _Ptr<const char> name)
 {
     _Ptr<cJSON> object_item = cJSON_CreateObject();
-    if (add_item_to_object(object, name, object_item, &global_hooks, false))
+    if (add_item_to_object(object,(const char *)  name, object_item, &global_hooks, false))
     {
         return object_item;
     }
@@ -2170,7 +2170,7 @@ _Ptr<cJSON> cJSON_AddObjectToObject(const _Ptr<cJSON> object, const _Ptr<const c
 _Ptr<cJSON> cJSON_AddArrayToObject(const _Ptr<cJSON> object, const _Ptr<const char> name)
 {
     _Ptr<cJSON> array = cJSON_CreateArray();
-    if (add_item_to_object(object, name, array, &global_hooks, false))
+    if (add_item_to_object(object, (const char *) name, array, &global_hooks, false))
     {
         return array;
     }
