@@ -1752,8 +1752,7 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
         }
 
         /* print key */
-        if (!print_string_ptr(_Assume_bounds_cast<const _Array_ptr<const unsigned char>>((unsigned char*)current_item->string, byte_count(0)), output_buffer))
-        {
+        if (!print_string_ptr((unsigned char*)current_item->string, output_buffer))        {
             return false;
         }
         update_offset(output_buffer);
@@ -1873,7 +1872,7 @@ _Ptr<cJSON> cJSON_GetArrayItem(_Ptr<const cJSON> array, int index)
     return get_array_item(array, (size_t)index);
 }
 
-static cJSON *get_object_item(const _Ptr<const cJSON> object, const char *name : itype(const _Nt_array_ptr<const char>), const cJSON_bool case_sensitive) : itype(_Ptr<cJSON>)
+static cJSON *get_object_item(const _Ptr<const cJSON> object, const char *name, const cJSON_bool case_sensitive) : itype(_Ptr<cJSON>)
 {
     cJSON *current_element = NULL;
 
@@ -1892,7 +1891,7 @@ static cJSON *get_object_item(const _Ptr<const cJSON> object, const char *name :
     }
     else
     {
-        while ((current_element != NULL) && (case_insensitive_strcmp(_Assume_bounds_cast<_Array_ptr<const unsigned char>>((const unsigned char*)name, byte_count(0)), _Assume_bounds_cast<_Array_ptr<const unsigned char>>((const unsigned char*)(current_element->string), byte_count(0))) != 0))
+        while ((current_element != NULL) && (case_insensitive_strcmp((const unsigned char*)name, (const unsigned char*)(current_element->string)) != 0))
         {
             current_element = current_element->next;
         }
@@ -1907,12 +1906,12 @@ static cJSON *get_object_item(const _Ptr<const cJSON> object, const char *name :
 
 _Ptr<cJSON> cJSON_GetObjectItem(const _Ptr<const cJSON> object, const _Nt_array_ptr<const char> string)
 {
-    return get_object_item(object, string, false);
+    return get_object_item(object, (const char *) string, false);
 }
 
 _Ptr<cJSON> cJSON_GetObjectItemCaseSensitive(const _Ptr<const cJSON> object, const _Nt_array_ptr<const char> string)
 {
-    return get_object_item(object, string, true);
+    return get_object_item(object, (const char *) string, true);
 }
 
 CJSON_PUBLIC(cJSON_bool) cJSON_HasObjectItem(_Ptr<const cJSON> object, _Nt_array_ptr<const char> string)
@@ -1928,9 +1927,9 @@ static void suffix_object(cJSON *prev : itype(_Ptr<cJSON>), cJSON *item : itype(
 }
 
 /* Utility for handling references. */
-static _Ptr<cJSON> create_reference(_Array_ptr<const cJSON> item, const _Ptr<const internal_hooks> hooks)
+static cJSON *create_reference(_Array_ptr<const cJSON> item, const _Ptr<const internal_hooks> hooks)
 {
-    _Array_ptr<cJSON> reference = NULL;
+    cJSON *reference = NULL;
     if (item == NULL)
     {
         return NULL;
@@ -1942,7 +1941,7 @@ static _Ptr<cJSON> create_reference(_Array_ptr<const cJSON> item, const _Ptr<con
         return NULL;
     }
 
-    memcpy<cJSON>(reference, item, sizeof(cJSON));
+    memcpy<cJSON>(reference, (cJSON*) item, sizeof(cJSON));
     reference->string = NULL;
     reference->type |= cJSON_IsReference;
     reference->next = reference->prev = NULL;
@@ -2669,7 +2668,7 @@ _Ptr<cJSON> cJSON_CreateStringArray(_Array_ptr<const _Nt_array_ptr<const char>> 
 
     for (i = 0; a && (i < (size_t)count); i++)
     {
-        n = ((cJSON *)cJSON_CreateString(strings[i]));
+        n = ((cJSON *)cJSON_CreateString((const char *) strings[i]));
         if(!n)
         {
             cJSON_Delete(a);
