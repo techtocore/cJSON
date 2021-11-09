@@ -1534,7 +1534,7 @@ fail:
 /* Render an array to text */
 static cJSON_bool print_array(const _Ptr<const cJSON> item, const _Ptr<printbuffer> output_buffer)
 {
-    _Array_ptr<unsigned char> output_pointer = NULL;
+    unsigned char *output_pointer = NULL;
     size_t length = 0;
     cJSON *current_element = item->child;
 
@@ -1572,7 +1572,7 @@ static cJSON_bool print_array(const _Ptr<const cJSON> item, const _Ptr<printbuff
             }
             *output_pointer++ = ',';
             if(output_buffer->format)
-            _Checked {
+            _Unchecked {
                 *output_pointer++ = ' ';
             }
             *output_pointer = '\0';
@@ -1709,7 +1709,7 @@ fail:
 /* Render an object to text. */
 static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuffer> output_buffer)
 {
-    _Array_ptr<unsigned char> output_pointer = NULL;
+    unsigned char *output_pointer = NULL;
     size_t length = 0;
     cJSON *current_item = item->child;
 
@@ -1729,7 +1729,7 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
     *output_pointer++ = '{';
     output_buffer->depth++;
     if (output_buffer->format)
-    _Checked {
+    _Unchecked {
         *output_pointer++ = '\n';
     }
     output_buffer->offset += length;
@@ -1745,7 +1745,7 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
                 return false;
             }
             for (i = 0; i < output_buffer->depth; i++)
-            _Checked {
+            _Unchecked {
                 *output_pointer++ = '\t';
             }
             output_buffer->offset += output_buffer->depth;
@@ -1766,7 +1766,7 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
         }
         *output_pointer++ = ':';
         if (output_buffer->format)
-        _Checked {
+        _Unchecked {
             *output_pointer++ = '\t';
         }
         output_buffer->offset += length;
@@ -1786,12 +1786,12 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
             return false;
         }
         if (current_item->next)
-        _Checked {
+        _Unchecked {
             *output_pointer++ = ',';
         }
 
         if (output_buffer->format)
-        _Checked {
+        _Unchecked {
             *output_pointer++ = '\n';
         }
         *output_pointer = '\0';
@@ -1809,7 +1809,7 @@ static cJSON_bool print_object(const _Ptr<const cJSON> item, const _Ptr<printbuf
     {
         size_t i;
         for (i = 0; i < (output_buffer->depth - 1); i++)
-        _Checked {
+        _Unchecked {
             *output_pointer++ = '\t';
         }
     }
